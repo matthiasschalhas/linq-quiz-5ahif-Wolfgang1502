@@ -16,7 +16,7 @@ namespace LinqQuiz.Library
         /// </exception>
         public static int[] GetEvenNumbers(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            return ((from num in (Enumerable.Range(1, exclusiveUpperLimit - 1)) where (num % 2) == 0 select num).ToArray());
         }
 
         /// <summary>
@@ -33,7 +33,19 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static int[] GetSquares(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+
+            //    return ((from num in (Enumerable.Range(1, exclusiveUpperLimit - 1)) where (int)(Math.Pow(num, 2)) % 7 == 0 select num).ToArray());
+
+            if(exclusiveUpperLimit > 1)
+            {
+
+                return (from num in Enumerable.Range(1, exclusiveUpperLimit - 1) where checked (num*num) % 7 == 0 orderby num descending select num*num).ToArray();
+            }
+            else
+            {
+                return new int[0];
+            }
+            
         }
 
         /// <summary>
@@ -52,7 +64,13 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static FamilySummary[] GetFamilyStatistic(IReadOnlyCollection<IFamily> families)
         {
-            throw new NotImplementedException();
+            var famQuery = from fam in families select new FamilySummary { FamilyID = fam.ID, NumberOfFamilyMembers = fam.Persons.Count, AverageAge = (fam.Persons.Count > 0) ? fam.Persons.Average((Func<IPerson, decimal>)compute) : 0 };
+            return famQuery.ToArray();
+        }
+
+        private static decimal compute(IPerson arg)
+        {
+            return arg.Age;
         }
 
         /// <summary>
