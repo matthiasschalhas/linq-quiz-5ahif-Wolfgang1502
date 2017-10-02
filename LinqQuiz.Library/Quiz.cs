@@ -33,19 +33,7 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static int[] GetSquares(int exclusiveUpperLimit)
         {
-
-            //    return ((from num in (Enumerable.Range(1, exclusiveUpperLimit - 1)) where (int)(Math.Pow(num, 2)) % 7 == 0 select num).ToArray());
-
-            if(exclusiveUpperLimit > 1)
-            {
-
-                return (from num in Enumerable.Range(1, exclusiveUpperLimit - 1) where checked (num*num) % 7 == 0 orderby num descending select num*num).ToArray();
-            }
-            else
-            {
-                return new int[0];
-            }
-            
+            return (exclusiveUpperLimit > 1) ? ((from num in Enumerable.Range(1, exclusiveUpperLimit - 1) where checked (num*num) % 7 == 0 orderby num descending select num*num).ToArray()) : (new int[0]);
         }
 
         /// <summary>
@@ -64,8 +52,7 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static FamilySummary[] GetFamilyStatistic(IReadOnlyCollection<IFamily> families)
         {
-            var famQuery = from fam in families select new FamilySummary { FamilyID = fam.ID, NumberOfFamilyMembers = fam.Persons.Count, AverageAge = (fam.Persons.Count > 0) ? fam.Persons.Average((Func<IPerson, decimal>)compute) : 0 };
-            return famQuery.ToArray();
+            return (from fam in families select new FamilySummary { FamilyID = fam.ID, NumberOfFamilyMembers = fam.Persons.Count, AverageAge = (fam.Persons.Count > 0) ? fam.Persons.Average((Func<IPerson, decimal>)compute) : 0 }).ToArray();
         }
 
         private static decimal compute(IPerson arg)
@@ -88,7 +75,12 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static (char letter, int numberOfOccurrences)[] GetLetterStatistic(string text)
         {
-            throw new NotImplementedException();
+
+            char[] textInArray = text.ToUpper().ToCharArray();
+            List<int> letters = Enumerable.Range('A', 'Z').ToList();
+
+            return (from letter in letters where (textInArray.Count(x => x == letter) > 0) select ((char)letter, textInArray.Count(x => x == letter))).ToArray();
+
         }
     }
 }
